@@ -10,6 +10,7 @@ TOKEN = os.environ.get("DISCORD_TOKEN", "")
 BOT_NAME = "Atlas"
 DEFAULT_PREFIXES = [",", "!"]
 OWNER_IDS: list[int] = []  # populated at runtime from application.owner if empty
+OWNER_ID = 1230660770749087796  # only this user can run Owner-category commands
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "data", "atlas.db")
 

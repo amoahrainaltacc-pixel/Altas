@@ -16,7 +16,7 @@ def is_owner_or_perm(permission_name: str):
     """Allow bot owners to bypass, otherwise require the named guild permission."""
 
     async def predicate(ctx: commands.Context) -> bool:
-        if await ctx.bot.is_owner(ctx.author):
+        if ctx.author.id == config.OWNER_ID or await ctx.bot.is_owner(ctx.author):
             return True
         if not ctx.guild:
             raise commands.NoPrivateMessage()
@@ -57,8 +57,10 @@ def can_ban():
 
 
 def is_bot_owner():
+    """Restrict a command to the hardcoded Atlas owner ID only."""
+
     async def predicate(ctx: commands.Context) -> bool:
-        if await ctx.bot.is_owner(ctx.author):
+        if ctx.author.id == config.OWNER_ID:
             return True
         raise commands.NotOwner()
 

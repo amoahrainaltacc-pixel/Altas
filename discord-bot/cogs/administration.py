@@ -14,12 +14,53 @@ from database import get_conn, get_guild_config, set_guild_config
 from utils import checks
 from utils.embeds import success_embed, error_embed, info_embed, base_embed
 
+SUPPORTED_LANGUAGES = {
+    "en": "🇬🇧 English",
+    "es": "🇪🇸 Español",
+    "fr": "🇫🇷 Français",
+    "de": "🇩🇪 Deutsch",
+    "pt": "🇵🇹 Português",
+    "it": "🇮🇹 Italiano",
+    "ja": "🇯🇵 日本語",
+    "ru": "🇷🇺 Русский",
+}
+
 
 class Administration(commands.Cog, name="administration"):
     """Configure Atlas for your server."""
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+
+    @commands.hybrid_command(help="View or change the server's language setting")
+    @checks.can_manage_guild()
+    async def language(self, ctx: commands.Context, code: str | None = None):
+        row = await get_guild_config(ctx.guild.id)
+        current = row["language"] if row["language"] else "en"
+        if not code:
+            listing = "\n".join(f"`{k}` — {v}" for k, v in SUPPORTED_LANGUAGES.items())
+            embed = base_embed(
+                "🌐 Language Settings",
+                (
+                    f"**Current language:** {SUPPORTED_LANGUAGES.get(current, current)} (`{current}`)\n\n"
+                    f"**Available:**\n{listing}\n\n"
+                    f"Use `{ctx.prefix}language <code>` to change it."
+                ),
+                config.COLOR_PRIMARY,
+                ctx.prefix,
+                ctx.guild,
+            )
+            await ctx.send(embed=embed)
+            return
+        code = code.lower()
+        if code not in SUPPORTED_LANGUAGES:
+            await ctx.send(embed=error_embed(
+                f"Unsupported language code `{code}`. Choose from: " + ", ".join(f"`{c}`" for c in SUPPORTED_LANGUAGES),
+                guild=ctx.guild,
+            ))
+            return
+        await set_guild_config(ctx.guild.id, language=code)
+        await ctx.send(embed=success_embed(f"Server language set to **{SUPPORTED_LANGUAGES[code]}**.", guild=ctx.guild))
 
     @commands.hybrid_command(help="Change the command prefix for this server")
     @checks.can_manage_guild()
@@ -61,6 +102,7 @@ class Administration(commands.Cog, name="administration"):
         embed.add_field(name="Welcome Channel", value=f"<#{row['welcome_channel']}>" if row["welcome_channel"] else "Not set", inline=True)
         embed.add_field(name="AutoMod", value="Enabled" if row["automod_enabled"] else "Disabled", inline=True)
         embed.add_field(name="Server Locked", value="Yes" if row["server_locked"] else "No", inline=True)
+        embed.add_field(name="Language", value=SUPPORTED_LANGUAGES.get(row["language"] or "en", "en"), inline=True)
         await ctx.send(embed=embed)
 
     @commands.command(help="Alias for config")

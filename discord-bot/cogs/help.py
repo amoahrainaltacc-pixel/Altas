@@ -25,16 +25,24 @@ CATEGORY_META = {
 }
 
 
+def visible_categories(is_owner: bool) -> dict:
+    """Hide the Owner category from anyone but the hardcoded bot owner."""
+    if is_owner:
+        return CATEGORY_META
+    return {name: meta for name, meta in CATEGORY_META.items() if name != "Owner"}
+
+
 class HelpSelect(discord.ui.Select):
     def __init__(self, bot: commands.Bot, author_id: int, prefix: str, guild: discord.Guild | None):
         self.bot = bot
         self.author_id = author_id
         self.prefix = prefix
         self.guild = guild
+        self.is_owner = author_id == config.OWNER_ID
         options = [
             discord.SelectOption(label="Home", emoji="🏠", value="home", description="Back to the overview")
         ]
-        for name, (emoji, cog_name) in CATEGORY_META.items():
+        for name, (emoji, cog_name) in visible_categories(self.is_owner).items():
             cog = bot.get_cog(cog_name)
             if cog and len(cog.get_commands()) > 0:
                 options.append(discord.SelectOption(label=name, emoji=emoji, value=cog_name))
@@ -46,8 +54,11 @@ class HelpSelect(discord.ui.Select):
             return
         value = self.values[0]
         if value == "home":
-            embed = build_home_embed(self.bot, self.prefix, self.guild)
+            embed = build_home_embed(self.bot, self.prefix, self.guild, self.is_owner)
             await interaction.response.edit_message(embed=embed, view=self.view)
+            return
+        if value == "owner" and not self.is_owner:
+            await interaction.response.send_message("This category isn't available to you.", ephemeral=True)
             return
         cog = self.bot.get_cog(value)
         embed = build_category_embed(cog, self.prefix, self.guild)
@@ -64,16 +75,17 @@ class HelpView(discord.ui.View):
             item.disabled = True
 
 
-def build_home_embed(bot: commands.Bot, prefix: str, guild: discord.Guild | None = None) -> discord.Embed:
+def build_home_embed(bot: commands.Bot, prefix: str, guild: discord.Guild | None = None, is_owner: bool = False) -> discord.Embed:
+    categories = visible_categories(is_owner)
     embed = base_embed(
         f"{config.EMOJI_INFO} Atlas Help Menu",
         (
             "Atlas is a full moderation and utility bot with commands across "
-            f"**{len(CATEGORY_META)}** categories.\n\n"
+            f"**{len(categories)}** categories.\n\n"
             f"Use the dropdown below to browse a category, or run `{prefix}help <command>` "
             "for details on a specific command.\n\n"
             "**Categories**\n"
-            + "\n".join(f"{emoji} {name}" for name, (emoji, _) in CATEGORY_META.items())
+            + "\n".join(f"{emoji} {name}" for name, (emoji, _) in categories.items())
         ),
         config.COLOR_PRIMARY,
         prefix,
@@ -118,9 +130,11 @@ class Help(commands.Cog, name="help"):
     @commands.hybrid_command(name="help", description="Show the interactive help menu")
     async def help(self, ctx: commands.Context, *, command: str | None = None):
         prefix = ctx.prefix if ctx.prefix and not ctx.prefix.startswith("<@") else ","
+        is_owner = ctx.author.id == config.OWNER_ID
         if command:
             cmd = self.bot.get_command(command)
-            if not cmd:
+            hidden = cmd and cmd.cog_name == "owner" and not is_owner
+            if not cmd or hidden:
                 await ctx.send(embed=base_embed("Not Found", f"No command called `{command}`.", config.COLOR_ERROR, prefix, ctx.guild))
                 return
             embed = base_embed(
@@ -137,7 +151,7 @@ class Help(commands.Cog, name="help"):
             await ctx.send(embed=embed)
             return
 
-        embed = build_home_embed(self.bot, prefix, ctx.guild)
+        embed = build_home_embed(self.bot, prefix, ctx.guild, is_owner)
         view = HelpView(self.bot, ctx.author.id, prefix, ctx.guild)
         await ctx.send(embed=embed, view=view)
 

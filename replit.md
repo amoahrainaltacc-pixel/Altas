@@ -8,7 +8,7 @@ Atlas is a full-featured Discord moderation & utility bot covering moderation, a
 - Required secret: `DISCORD_TOKEN` (bot token from the Discord Developer Portal)
 - Data persists in `discord-bot/data/atlas.db` (SQLite, created automatically on first run)
 - Restart the workflow after any code change (cogs are loaded once at startup)
-- Owner-only commands (`eval`, `sync`, `reload`, `blacklist`, etc.) use the Discord application's owner, resolved automatically at runtime — no config needed
+- Owner-only commands (`eval`, `sync`, `reload`, `blacklist`, etc.) are restricted to a single hardcoded Discord user ID (`config.OWNER_ID`), not the Discord application's resolved owner. The Owner category is also hidden from `,help`/`/help` for everyone else.
 
 ## Stack
 
@@ -31,6 +31,9 @@ Atlas is a full-featured Discord moderation & utility bot covering moderation, a
 - Per-guild config (prefix, log channels, automod toggles, welcome/goodbye messages, autorole, etc.) lives in a single `guild_config` table, lazily created on first access.
 - Persistent `discord.ui.View`s (ticket panel, ticket controls, giveaway entry, verify button) are re-registered on bot startup via `bot.add_view()` so buttons keep working across restarts.
 - Owner-only commands are always plain prefix commands (never slash) to avoid cluttering the public command list and to keep `eval` off of Discord's app command surface.
+- Bot presence rotates on a `tasks.loop` (every 20s) through several `discord.Activity`/`discord.Game` statuses with live member/server counts, instead of a single static presence set once in `on_ready`.
+- New guild joins trigger an automatic welcome/intro embed via `on_guild_join` in `main.py`, posted to the system channel (falls back to the first channel the bot can post in).
+- Per-guild language preference lives as a `language` column on `guild_config` (default `'en'`), set via `,language`. Since the table is created with `CREATE TABLE IF NOT EXISTS`, new columns added later require an `ALTER TABLE ... ADD COLUMN` migration guarded in a try/except inside `init_db()` — existing databases won't pick up new columns otherwise.
 
 ## Product
 

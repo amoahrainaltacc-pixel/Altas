@@ -44,7 +44,8 @@ CREATE TABLE IF NOT EXISTS guild_config (
     antinuke INTEGER DEFAULT 0,
     antiwebhook INTEGER DEFAULT 0,
     level_up_message INTEGER DEFAULT 1,
-    maintenance INTEGER DEFAULT 0
+    maintenance INTEGER DEFAULT 0,
+    language TEXT DEFAULT 'en'
 );
 
 CREATE TABLE IF NOT EXISTS whitelist (
@@ -179,6 +180,13 @@ async def init_db() -> None:
     _conn.row_factory = aiosqlite.Row
     await _conn.executescript(SCHEMA)
     await _conn.commit()
+    # Lightweight migration for columns added after initial release —
+    # CREATE TABLE IF NOT EXISTS won't add new columns to an existing table.
+    try:
+        await _conn.execute("ALTER TABLE guild_config ADD COLUMN language TEXT DEFAULT 'en'")
+        await _conn.commit()
+    except Exception:
+        pass
 
 
 def get_conn() -> aiosqlite.Connection:
