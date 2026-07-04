@@ -1,0 +1,302 @@
+Create a Discord moderation and utility bot named Atlas using Discord.js v14 (Python).
+
+General Requirements
+Bot Name: Atlas
+Language: Python)
+Database: SQLite or JSON (MongoDB support optional)
+Slash Commands and Prefix Commands
+Default prefixes:
+,
+!
+Server administrators can change the prefix using:
+,prefix <newprefix>
+
+or
+
+!prefix <newprefix>
+Modern handler system
+Command categories
+Cooldowns
+Permission system
+Logging system
+Beautiful embeds
+Button & Select Menu support
+Modal support
+Auto error handling
+Easy configuration
+Fast startup
+Professional folder structure
+Fully commented code
+High performance
+Premium looking UI
+Dashboard Style
+
+Make every embed look modern.
+
+Use:
+
+Rounded emoji style
+Clean spacing
+Server icon thumbnails
+User avatars
+Progress bars
+Rich embeds
+Buttons
+Select menus
+Pagination
+Footer showing prefix
+Timestamp
+Help Command
+
+Create an interactive help menu with categories.
+
+Categories:
+
+Moderation
+Administration
+Utility
+Fun
+Information
+Server
+User
+Music
+Logging
+AutoMod
+Giveaway
+Tickets
+Economy
+Leveling
+Welcome
+Security
+Owner
+Premium
+Commands
+
+Include 100+ commands, such as:
+
+Moderation
+ban
+unban
+kick
+mute
+unmute
+timeout
+removetimeout
+warn
+unwarn
+warnings
+purge
+clear
+slowmode
+nuke
+lock
+unlock
+lockdown
+unlockdown
+hide
+unhide
+nickname
+role
+tempban
+tempmute
+softban
+voicekick
+move
+deafen
+undeafen
+disconnect
+Administration
+prefix
+setup
+config
+settings
+autorole
+welcome
+goodbye
+reactionrole
+embed
+announce
+poll
+verify
+backup
+restore
+resetconfig
+suggestion
+logs
+serverlock
+antiraid
+whitelist
+Utility
+avatar
+banner
+userinfo
+serverinfo
+roleinfo
+channelinfo
+membercount
+botinfo
+ping
+uptime
+invite
+support
+help
+stats
+github
+website
+weather
+calculator
+translate
+qr
+Fun
+meme
+joke
+cat
+dog
+fox
+8ball
+coinflip
+dice
+rate
+roast
+ship
+hug
+slap
+kiss
+pat
+dance
+trivia
+wouldyourather
+ascii
+emojify
+Information
+emojis
+roles
+boosts
+boostslist
+servericon
+serverbanner
+inviteinfo
+permissions
+whois
+firstmessage
+AutoMod
+automod
+antispam
+antilink
+antiinvite
+antiemoji
+anticaps
+antihoist
+antibot
+antinuke
+antiwebhook
+Logging
+setlog
+modlogs
+joinlogs
+messagelogs
+voicelogs
+rolelogs
+nicklogs
+serverlogs
+deletelogs
+editlogs
+Tickets
+ticket
+closeticket
+adduser
+removeuser
+transcript
+claim
+rename
+openticket
+deleteticket
+ticketpanel
+Giveaways
+giveaway
+reroll
+end
+pause
+resume
+listgiveaways
+Welcome
+setwelcome
+setgoodbye
+previewwelcome
+welcomecard
+autorole
+verifypanel
+Economy
+balance
+daily
+work
+rob
+deposit
+withdraw
+shop
+buy
+sell
+leaderboard
+Leveling
+rank
+leaderboard
+setxp
+removexp
+levelrole
+xp
+Owner
+eval
+reload
+restart
+shutdown
+blacklist
+whitelist
+sync
+reloadall
+diagnostics
+maintenance
+Extra Features
+Advanced AutoMod
+Anti Raid
+Anti Nuke
+Sticky Messages
+Starboard
+AFK System
+Sniping
+Reminder System
+Todo Lists
+Temporary Voice Channels
+Invite Tracker
+XP System
+Economy
+Giveaways
+Ticket System
+Verification
+Suggestions
+Birthdays
+Custom Embeds
+Reminder Scheduler
+Auto Publish
+Web Dashboard (optional)
+Music Player
+Music Queue
+Playlist Support
+Spotify Support
+Lavalink Support
+Premium System
+UI
+
+The bot should have one of the cleanest Discord UIs possible:
+
+Professional embeds
+Discord-native colors
+Animated loading messages
+Progress bars
+Buttons
+Select menus
+Modals
+Paginated help
+Beautiful status cards
+Interactive configuration panels
+Clean error messages
+Consistent design across all commands
